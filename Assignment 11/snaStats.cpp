@@ -5,10 +5,9 @@
 //  CS 302 - Assignment #11
 //  Social Network Analysis
 
+#include <iostream>
 #include <thread>
 #include <unistd.h>
-
-#include "socialNetwork.h"
 
 using namespace std;
 
@@ -33,46 +32,46 @@ int main(int argc, char *argv[])
 // ------------------------------------------------------------------
 //  Check argument
 
-	if (argc == 1) {
-		cout << "usage: <dataFileName>" << endl;
-		return 0;
-	}
+    if (argc == 1) {
+        cout << "usage: <dataFileName>" << endl;
+        return 0;
+    }
 
-	if (argc != 2) {
-		cout << "main: Error, invalid command line arguments." << endl;
-		return 0;
-	}
+    if (argc != 2) {
+        cout << "main: Error, invalid command line arguments." << endl;
+        return 0;
+    }
 
-	if (access(argv[1], F_OK) == -1) {
-		cout << "main: Error, data file does not exist." << endl;
-		return	0;
-	}
+    if (access(argv[1], F_OK) == -1) {
+        cout << "main: Error, data file does not exist." << endl;
+        return    0;
+    }
 
-	fName = string(argv[1]);
+    fName = string(argv[1]);
 
 // ------------------------------------------------------------------
 //  Find social network statistics.
 //  Make thread calls to each function so they operate in parallel.
 
-	socialNetwork	myGraph;
-	int	topCount = 5;
+    socialNetwork    myGraph;
+    int    topCount = 5;
 
-	if (myGraph.readGraph(fName)) {
+    if (myGraph.readGraph(fName)) {
 
-		thread t1(&socialNetwork::diameter, &myGraph);
-		thread t2(&socialNetwork::findConnectedComponents, &myGraph);
-		thread t3(&socialNetwork::influencers, &myGraph, topCount);
-		thread t4(&socialNetwork::triangles, &myGraph);
-		thread t5(&socialNetwork::degreeStats, &myGraph);
+        thread t1(&socialNetwork::diameter, &myGraph);
+        thread t2(&socialNetwork::findConnectedComponents, &myGraph);
+        thread t3(&socialNetwork::influencers, &myGraph, topCount);
+        thread t4(&socialNetwork::triangles, &myGraph);
+        thread t5(&socialNetwork::degreeStats, &myGraph);
 
-		t1.join();
-		t2.join();
-		t3.join();
-		t4.join();
-		t5.join();
+        t1.join();
+        t2.join();
+        t3.join();
+        t4.join();
+        t5.join();
 
-		myGraph.graphInformation();
-	}
+        myGraph.graphInformation();
+    }
 
 // *****************************************************************
 //  All done.
