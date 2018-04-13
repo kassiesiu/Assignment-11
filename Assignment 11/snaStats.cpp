@@ -9,6 +9,8 @@
 #include <thread>
 #include <unistd.h>
 
+#include "socialNetwork.h"
+
 using namespace std;
 
 int main(int argc, char *argv[])
@@ -60,13 +62,13 @@ int main(int argc, char *argv[])
 
         thread t1(&socialNetwork::diameter, &myGraph);
         thread t2(&socialNetwork::findConnectedComponents, &myGraph);
-        thread t3(&socialNetwork::influencers, &myGraph, topCount);
+//        thread t3(&socialNetwork::influencers, &myGraph, topCount);
         thread t4(&socialNetwork::triangles, &myGraph);
         thread t5(&socialNetwork::degreeStats, &myGraph);
 
         t1.join();
         t2.join();
-        t3.join();
+//        t3.join();
         t4.join();
         t5.join();
 

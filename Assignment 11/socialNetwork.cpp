@@ -4,17 +4,27 @@
 
 #include "socialNetwork.h"
 
-void readGraph() { // read a formatted graph file
+socialNetwork::socialNetwork() {
+    
 }
-void findConnectedComponents() { // find size of the largest connected component
+socialNetwork::~socialNetwork() {
+    
 }
-void degreeStats() { // find the vertices's degree statistics including...
+bool socialNetwork::readGraph(string fileName) { // read a formatted graph file
+    return true;
 }
-void diameter() { // find the graph diameter
+void socialNetwork::findConnectedComponents() { // find size of the largest connected component
 }
-void influencers() { // find the top n influencer's based on eigenvector centrality
+void socialNetwork::degreeStats() { // find the vertices's degree statistics including...
 }
-void triangles() { // find the count of triangles for the graph.
+void socialNetwork::diameter() { // find the graph diameter
 }
-void printGraph() { // print the formatted graph. Optional, used only for debugging.
+void socialNetwork::influencers() { // find the top n influencer's based on eigenvector centrality
+}
+void socialNetwork::triangles() { // find the count of triangles for the graph.
+}
+void socialNetwork::printGraph() { // print the formatted graph. Optional, used only for debugging.
+}
+void socialNetwork::graphInformation() {
+    
 }
