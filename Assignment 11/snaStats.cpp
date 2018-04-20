@@ -59,8 +59,6 @@ int main(int argc, char *argv[])
     int    topCount = 5;
 
     if (myGraph.readGraph(fName)) {
-        
-//        myGraph.printGraph();
 
         thread t1(&socialNetwork::diameter, &myGraph);
         thread t2(&socialNetwork::findConnectedComponents, &myGraph);

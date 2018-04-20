@@ -4,14 +4,14 @@
 
 #include "socialNetwork.h"
 #include <iostream>
-#include <vector>
 #include <iomanip>
 #include <fstream>
 
 using namespace std;
 
 socialNetwork::socialNetwork() {
-    vertexCount = edgeCount = 0;
+    vertexCount = edgeCount = dia = trianglesCnt = 0;
+    adjList = NULL;
 }
 socialNetwork::~socialNetwork() {
     
@@ -42,14 +42,16 @@ bool socialNetwork::readGraph(string fileName) { // read a formatted graph file
         addEdge (v2, v1, weight);
     }
     
-    
+    edgeCount /= 2; // because undirected graph
     
     return true;
 }
 void socialNetwork::createGraph() {
     
-    for (int i = 0; i < vertexCount; i++) // initializes the vertex
-        adjList.push_back(NULL);
+    // initializes array and sets all the pointers to NULL
+    adjList = new edgeStruct*[vertexCount];
+    for (int i = 0; i < vertexCount; i++)
+        adjList[i] = NULL;
     
 }
 
@@ -80,22 +82,34 @@ void socialNetwork::findConnectedComponents() { // find size of the largest conn
 void socialNetwork::degreeStats() { // find the vertices's degree statistics including...
 }
 void socialNetwork::diameter() { // find the graph diameter
+    
 }
 void socialNetwork::influencers() { // find the top n influencer's based on eigenvector centrality
 }
-int socialNetwork::triangles() { // find the count of triangles for the graph.
-    int numOfTriangles = 0;
+void socialNetwork::triangles() { // find the count of triangles for the graph.
     
-    // find combination of every two nodes
-    // go through every vertex
+//    // find combination of every two nodes
+//    // go through every vertex
 //    for (int i = 0; i < vertexCount; i++) {
-//        edgeStruct *curr = adjList[i];
-//        while (curr != NULL) {
-//            
+//        for (edgeStruct *srcCurr = adjList[adjList[i]->v2]; srcCurr != NULL; srcCurr = srcCurr->next) {
+//
+//
+//            if (srcCurr->v2 == i) { // if the pair is two nodes that point to e/o
+//                continue;
+//            }
+//
+//            for (edgeStruct *destCurr = adjList[srcCurr->v2]; destCurr != NULL; destCurr = destCurr->next) {
+//
+//                if (destCurr->v2 == i) {
+//                    trianglesCnt++;
+//                    break;
+//                }
+//
+//            }
 //        }
 //    }
-    
-    return numOfTriangles;
+//
+//    trianglesCnt = trianglesCnt / 3;
 }
 void socialNetwork::printGraph() { // print the formatted graph. Optional, used only for debugging.
     
@@ -112,7 +126,7 @@ void socialNetwork::graphInformation() {
     cout << "Graph title: " << title << endl;
     cout << "Vertex Count: " << vertexCount << endl;;
     cout << "Edge Count: " << edgeCount << endl;;
-    cout << "Edges/Nodes Ratio: " << fixed << setprecision(6) << double(vertexCount)/edgeCount << endl;
+    cout << "Edges/Nodes Ratio: " << fixed << setprecision(6) << double(edgeCount)/vertexCount << endl;
     cout << "Graph Density: " << double(2*edgeCount)/(vertexCount * (vertexCount - 1)) << endl;
     
     cout << endl;
@@ -131,7 +145,7 @@ void socialNetwork::graphInformation() {
     
     cout << endl;
     
-    cout << "Triangles: " << endl;
+    cout << "Triangles: " << trianglesCnt << endl;
     
     cout << endl;
     
