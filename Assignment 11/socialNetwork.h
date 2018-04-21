@@ -29,6 +29,13 @@ private:
     
     int dia;
     int trianglesCnt;
+    int highestDegree;
+    int countOfHighestDegree;
+    int lowestDegree;
+    int countOfLowestDegree;
+    int singles;
+    double avgDegree;
+    int unconnected;
     
     struct edgeStruct {
         int v2;
@@ -36,7 +43,12 @@ private:
         edgeStruct *next;
     };
     
-    edgeStruct **adjList;   
+    struct vertextStruct {
+        int degree;
+        edgeStruct *next;
+    };
+    
+    edgeStruct **adjList;
     
     void createGraph();
     void addEdge(int, int, int);

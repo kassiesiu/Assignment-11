@@ -10,7 +10,8 @@
 using namespace std;
 
 socialNetwork::socialNetwork() {
-    vertexCount = edgeCount = dia = trianglesCnt = 0;
+    vertexCount = edgeCount = dia = trianglesCnt = singles = countOfHighestDegree = countOfLowestDegree = unconnected = 0;
+    highestDegree = lowestDegree = -1;
     adjList = NULL;
 }
 socialNetwork::~socialNetwork() {
@@ -79,7 +80,56 @@ void socialNetwork::addEdge(int src, int dest, int weightVal) {
 }
 void socialNetwork::findConnectedComponents() { // find size of the largest connected component
 }
-void socialNetwork::degreeStats() { // find the vertices's degree statistics including...
+void socialNetwork::degreeStats() { // find the vertices's degree statistics
+    
+    int currDegree = 0;
+    int sum = 0;
+    
+    for (int i = 0; i < vertexCount; i++) {
+        
+        // checks for singles
+        if (adjList[i] != NULL) {
+            if (adjList[i]->next == NULL)
+                singles++;
+        } else {
+            unconnected++;
+            continue;
+        }
+            
+        
+        for (edgeStruct *curr = adjList[i]; curr != NULL; curr = curr->next) { // traverses through adjacent nodes
+            
+            currDegree++;
+            
+        }
+    
+        // after done traversing through adjacent nodes
+        
+        if (highestDegree == currDegree)
+            countOfHighestDegree++;
+        
+        if (lowestDegree == currDegree)
+            countOfLowestDegree++;
+        
+        if (highestDegree == -1 && lowestDegree == -1) { // if first time
+            highestDegree = lowestDegree = currDegree;
+            countOfHighestDegree = 1;
+            countOfLowestDegree = 1;
+        }
+        else if (currDegree > highestDegree) {
+            highestDegree = currDegree;
+            countOfHighestDegree = 1;
+        } else if (currDegree < lowestDegree) {
+            lowestDegree = currDegree;
+            countOfLowestDegree = 1;
+        }
+        
+        sum += currDegree;
+        currDegree = 0;
+    }
+    
+    avgDegree = double(sum)/vertexCount;
+    
 }
 void socialNetwork::diameter() { // find the graph diameter
     
@@ -131,17 +181,17 @@ void socialNetwork::graphInformation() {
     
     cout << endl;
     
-    cout << "Highest Degree: " << endl;
-    cout << "Lowest Degree: " << endl;
-    cout << "Count of Singles: " << endl;
-    cout << "Count of Highest Degree: " << endl;
-    cout << "Count of Lowest Degree: " << endl;
-    cout << "Average Degree: " << endl;
+    cout << "Highest Degree: " << highestDegree << endl;
+    cout << "Lowest Degree: " << lowestDegree << endl;
+    cout << "Count of Singles: " << singles << endl;
+    cout << "Count of Highest Degree: " << countOfHighestDegree << endl;
+    cout << "Count of Lowest Degree: " << countOfLowestDegree << endl;
+    cout << "Average Degree: " << avgDegree << endl;
     
     cout << endl;
     
-    cout << "The largest connected component contains: " << "nodes." << endl;
-    cout << "There are " << "unconnected nodes" << endl;
+    cout << "The largest connected component contains " << "nodes." << endl;
+    cout << "There are " << unconnected << " unconnected nodes" << endl;
     
     cout << endl;
     

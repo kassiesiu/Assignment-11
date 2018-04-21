@@ -13,23 +13,28 @@
 
 using namespace std;
 
+struct edgeStruct {
+    int v2;
+    int weight;
+};
+
 int main(int argc, char *argv[])
 {
 
 // *****************************************************************
 //  Headers...
 
-	string	stars, bars, dashes;
-	string	fName;
-	stars.append(65, '*');
-	bars.append(65, '=');
-	dashes.append(40,'-');
-	const char* bold   = "\033[1m";
-	const char* unbold   = "\033[0m";
+    string    stars, bars, dashes;
+    string    fName;
+    stars.append(65, '*');
+    bars.append(65, '=');
+    dashes.append(40,'-');
+    const char* bold   = "\033[1m";
+    const char* unbold   = "\033[0m";
 
-	cout << stars << endl << bold << "CS 302 - Assignment #11" << endl;
-	cout << "Social Network Analysis (SNA) Project" << unbold << endl;
-	cout << endl;
+    cout << stars << endl << bold << "CS 302 - Assignment #11" << endl;
+    cout << "Social Network Analysis (SNA) Project" << unbold << endl;
+    cout << endl;
 
 // ------------------------------------------------------------------
 //  Check argument
@@ -78,9 +83,9 @@ int main(int argc, char *argv[])
 // *****************************************************************
 //  All done.
 
-	cout << stars << endl;
-	cout << "Complete." << endl;
-
+    cout << stars << endl;
+    cout << "Complete." << endl;
+    
 	return 0;
 }
 
