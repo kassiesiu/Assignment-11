@@ -44,11 +44,6 @@ private:
         edgeStruct *next;
     };
     
-    struct vertextStruct {
-        int degree;
-        edgeStruct *next;
-    };
-    
     edgeStruct **adjList;
     int *degrees;
     

@@ -3,6 +3,7 @@
 // Section 1001
 
 #include "socialNetwork.h"
+#include "priorityQueue.h"
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -169,20 +170,33 @@ void socialNetwork::degreeStats() { // find the vertices's degree statistics
     
 }
 void socialNetwork::diameter() { // find the graph diameter
-    bool *visit = new bool[vertexCount];
-    int **shortestPaths = new int*[vertexCount];
-    for (int i = 0; i < vertexCount; i++) {
-        shortestPaths[i] = new int[vertexCount];
-        visit[i] = false;
-    }
-    
-    for (int s = 0; s < vertexCount; s++) {
-        for (int v = 0; v < vertexCount; v++) {
-            visit[v] = false;
-        }
-        
-        
-    }
+//    bool *visit = new bool[vertexCount];
+//    int **shortestPaths = new int*[vertexCount];
+//    for (int i = 0; i < vertexCount; i++) {
+//        shortestPaths[i] = new int[vertexCount];
+//        visit[i] = false;
+//    }
+//
+//    for (int s = 0; s < vertexCount; s++) {
+//        for (int v = 0; v < vertexCount; v++) {
+//            visit[v] = false;
+//        }
+//
+//        priorityQueue<int> myQueue(MIN, vertexCount);
+//        visit[s] = true;
+//        myQueue.insert(s, s);
+//        shortestPaths[s][s] = 0;
+//
+//        while (!myQueue.isEmpty()) {
+//            unsigned int v = 0;
+//            int throwaway = 0;
+//            myQueue.deleteMin(throwaway, v);
+//
+//
+//        }
+//
+//
+//    }
 }
 void socialNetwork::influencers(int topCount) { // find the top n influencer's based on eigenvector centrality
     
@@ -257,18 +271,40 @@ void socialNetwork::triangles() { // find the count of triangles for the graph.
     
 //    // find combination of every two nodes
 //    // go through every vertex
+    
+    
+    
     for (int i = 0; i < vertexCount; i++) {
         
+        for (edgeStruct *iCurr = adjList[i]; iCurr != NULL; iCurr = iCurr->next) { // goes through all the adjacent edges of every vertex
+            
+            for (edgeStruct *jCurr = adjList[iCurr->v2]; jCurr != NULL; jCurr = jCurr->next) { // goes through all the adjacent edges of the adjacent edges of every vertex
+
+                for (edgeStruct *kCurr = adjList[jCurr->v2]; kCurr != NULL; kCurr=kCurr->next) {
+                    if (kCurr->v2 == i) {
+                        trianglesCnt++;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    
+    
+//    for (int i = 0; i < vertexCount; i++) {
+    
 //        if (degrees[i] < 1)
 //            continue;
 
-        if (adjList[i] == NULL)
-            continue;
-        
-        if (adjList[i] != NULL)
-            if (adjList[i]->next == NULL)
-                continue;
-        
+//        if (adjList[i] == NULL)
+//            continue;
+//
+//        if (adjList[i] != NULL)
+//            if (adjList[i]->next == NULL)
+//                continue;
+//
 //        edgeStruct *iCurr = adjList[i];
 //        for (int j = iCurr->v2; iCurr != NULL; iCurr = iCurr->next) {
 //            j = iCurr->v2;
@@ -315,9 +351,9 @@ void socialNetwork::triangles() { // find the count of triangles for the graph.
 //
 //            }
 //        }
-    }
+//    }
 
-//    trianglesCnt = trianglesCnt / 2;
+    trianglesCnt = trianglesCnt / 6;
 }
 void socialNetwork::printGraph() { // print the formatted graph. Optional, used only for debugging.
     
