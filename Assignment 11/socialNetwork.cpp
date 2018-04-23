@@ -10,9 +10,10 @@
 using namespace std;
 
 socialNetwork::socialNetwork() {
-    vertexCount = edgeCount = dia = trianglesCnt = singles = countOfHighestDegree = countOfLowestDegree = unconnected = 0;
+    vertexCount = edgeCount = dia = trianglesCnt = singles = countOfHighestDegree = countOfLowestDegree = unconnected = largestConnected = 0;
     highestDegree = lowestDegree = -1;
     adjList = NULL;
+    degrees = NULL;
 }
 socialNetwork::~socialNetwork() {
     
@@ -51,8 +52,11 @@ void socialNetwork::createGraph() {
     
     // initializes array and sets all the pointers to NULL
     adjList = new edgeStruct*[vertexCount];
-    for (int i = 0; i < vertexCount; i++)
+    degrees = new int[vertexCount];
+    for (int i = 0; i < vertexCount; i++) {
         adjList[i] = NULL;
+        degrees[i] = 0;
+    }
     
 }
 
@@ -78,8 +82,38 @@ void socialNetwork::addEdge(int src, int dest, int weightVal) {
     
     edgeCount++;
 }
+
+
+
 void socialNetwork::findConnectedComponents() { // find size of the largest connected component
+    
+    bool visit[vertexCount];
+    
+    for (int i = 0; i < vertexCount; i++)
+        visit[i] = false;
+
+    int count = 0;
+
+    for (int i = 0; i < vertexCount; i++) {
+        if (visit[i] == false) {
+            DFS(i, visit, count);
+            if (count > largestConnected)
+                largestConnected = count;
+//            cout << "Count: " << count << endl << endl;
+            count = 0;
+        }
+    }
 }
+
+void socialNetwork::DFS(int v, bool visit[], int &count) {
+    visit[v] = true;
+    count++;
+//    cout << v << " ";
+    for (edgeStruct *curr = adjList[v]; curr != NULL; curr = curr->next)
+        if (visit[curr->v2] == false)
+            DFS(curr->v2, visit, count);
+}
+
 void socialNetwork::degreeStats() { // find the vertices's degree statistics
     
     int currDegree = 0;
@@ -105,6 +139,8 @@ void socialNetwork::degreeStats() { // find the vertices's degree statistics
     
         // after done traversing through adjacent nodes
         
+//        degrees[i] = currDegree; // for triangle use
+        
         if (highestDegree == currDegree)
             countOfHighestDegree++;
         
@@ -115,8 +151,7 @@ void socialNetwork::degreeStats() { // find the vertices's degree statistics
             highestDegree = lowestDegree = currDegree;
             countOfHighestDegree = 1;
             countOfLowestDegree = 1;
-        }
-        else if (currDegree > highestDegree) {
+        } else if (currDegree > highestDegree) {
             highestDegree = currDegree;
             countOfHighestDegree = 1;
         } else if (currDegree < lowestDegree) {
@@ -126,21 +161,144 @@ void socialNetwork::degreeStats() { // find the vertices's degree statistics
         
         sum += currDegree;
         currDegree = 0;
+        
+        
     }
     
     avgDegree = double(sum)/vertexCount;
     
 }
 void socialNetwork::diameter() { // find the graph diameter
+    bool *visit = new bool[vertexCount];
+    int **shortestPaths = new int*[vertexCount];
+    for (int i = 0; i < vertexCount; i++) {
+        shortestPaths[i] = new int[vertexCount];
+        visit[i] = false;
+    }
     
+    for (int s = 0; s < vertexCount; s++) {
+        for (int v = 0; v < vertexCount; v++) {
+            visit[v] = false;
+        }
+        
+        
+    }
 }
-void socialNetwork::influencers() { // find the top n influencer's based on eigenvector centrality
+void socialNetwork::influencers(int topCount) { // find the top n influencer's based on eigenvector centrality
+    
+    int whenToStop = 0;
+    
+    if (vertexCount < 100)
+        whenToStop = 10;
+    else
+        whenToStop = 100;
+    
+//    create v[|V|] and initialize all to 1
+//    create w[|V|]
+    unsigned long long v[vertexCount];
+    unsigned long long w[vertexCount];
+//    int *v = new int[vertexCount];
+//    int *w = new int[vertexCount];
+    
+    for (int i = 0; i < vertexCount; i++)
+        v[i] = 1;
+    
+    //    Repeat 100 times
+    for (int j = 0; j < 10; j++) {
+        //    initialize all w[|V| to 0
+        
+        
+        for (int i = 0; i < vertexCount; i++)
+            w[i] = 0;
+        
+        // for every vertex i, in graph, G=(V,E)
+        for (int i = 0; i < vertexCount; i++) {
+            // for every adjacent u of i
+            for (edgeStruct *adjOfI = adjList[i]; adjOfI != NULL; adjOfI = adjOfI->next) {
+                //                     w[u] += v[i]
+                w[adjOfI->v2] += v[i];
+            }
+        }
+
+        
+        //                     set v[] = w[]
+        for (int i = 0; i < vertexCount; i++)
+            v[i] = w[i];
+        
+//        for (int i = 0; i < 6; i++)
+//            cout << i << ": " << v[i] << endl;
+    }
+    
+    
+    //                     sum = sum of the entries of v[]
+    unsigned long long sum = 0;
+    for (int i = 0; i < vertexCount; i++)
+        sum += v[i];
+    
+    //                     divide each entry of v[] by sum
+//    double x[vertexCount];
+    for (int i = 0; i < vertexCount; i++) {
+//        cout << i << ": " << (v[i] / double(sum))*100 << endl;
+//        x[i] = (v[i]/double(sum))*10;
+    }
+    
+    cout << endl;
+    
+    //                     find top n values in v[]
+//    bubbleSort(x, topCount);
+//
+//    for (int i = 0; i < topCount; i++) {
+//        cout << x[i] << endl;
+//    }
+
+
 }
 void socialNetwork::triangles() { // find the count of triangles for the graph.
     
 //    // find combination of every two nodes
 //    // go through every vertex
-//    for (int i = 0; i < vertexCount; i++) {
+    for (int i = 0; i < vertexCount; i++) {
+        
+//        if (degrees[i] < 1)
+//            continue;
+
+        if (adjList[i] == NULL)
+            continue;
+        
+        if (adjList[i] != NULL)
+            if (adjList[i]->next == NULL)
+                continue;
+        
+//        edgeStruct *iCurr = adjList[i];
+//        for (int j = iCurr->v2; iCurr != NULL; iCurr = iCurr->next) {
+//            j = iCurr->v2;
+//            edgeStruct *jCurr = adjList[j];
+//            for (int k = jCurr->v2; jCurr != NULL; jCurr = jCurr->next) {
+//                k = jCurr->v2;
+//                edgeStruct *kCurr = adjList[k];
+//                if (kCurr->v2 == i) {
+//                    trianglesCnt++;
+//                    break;
+//                }
+//            }
+//        }
+//
+        
+//        for (edgeStruct *jCurr = adjList[adjList[i]->v2]; jCurr != NULL; jCurr = jCurr->next) {
+//
+//            if (jCurr->v2 == i) { // if the pair is two nodes that point to e/o
+//                continue;
+//            }
+//
+//            for (edgeStruct *lCurr = adjList[jCurr->v2]; lCurr != NULL; lCurr = lCurr->next) {
+//
+//                if (lCurr->v2 == i)
+//                    trianglesCnt++;
+//
+//            }
+//        }
+        
+        
 //        for (edgeStruct *srcCurr = adjList[adjList[i]->v2]; srcCurr != NULL; srcCurr = srcCurr->next) {
 //
 //
@@ -157,9 +315,9 @@ void socialNetwork::triangles() { // find the count of triangles for the graph.
 //
 //            }
 //        }
-//    }
-//
-//    trianglesCnt = trianglesCnt / 3;
+    }
+
+//    trianglesCnt = trianglesCnt / 2;
 }
 void socialNetwork::printGraph() { // print the formatted graph. Optional, used only for debugging.
     
@@ -190,7 +348,7 @@ void socialNetwork::graphInformation() {
     
     cout << endl;
     
-    cout << "The largest connected component contains " << "nodes." << endl;
+    cout << "The largest connected component contains " << largestConnected << " nodes." << endl;
     cout << "There are " << unconnected << " unconnected nodes" << endl;
     
     cout << endl;
@@ -203,4 +361,28 @@ void socialNetwork::graphInformation() {
     
     cout << endl;
     
+}
+
+void socialNetwork::bubbleSort(double myArray[], int top) {
+    for (int i = 0; i < top; i++) {
+        bool swapped = false;
+        for (int j = 0; j < vertexCount - i - 1; j++) {
+            if (myArray[j] < myArray[j+1]) { // swap
+                //                int temp = myArray[j];
+                //                myArray[j] = myArray[j+1];
+                //                myArray[j+1] = temp;
+                swap(myArray[j], myArray[j+1]);
+                swapped = true;
+            }
+        }
+        
+        if (!swapped)
+            break;
+    }
+}
+
+void socialNetwork::swap(double& x, double&y) {
+    int temp = x;
+    x = y;
+    y = temp;
 }
