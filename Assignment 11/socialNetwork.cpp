@@ -11,13 +11,24 @@
 using namespace std;
 
 socialNetwork::socialNetwork() {
-    vertexCount = edgeCount = dia = trianglesCnt = singles = countOfHighestDegree = countOfLowestDegree = unconnected = largestConnected = 0;
+    vertexCount = edgeCount = dia = trianglesCnt = singles = countOfHighestDegree = countOfLowestDegree = unconnected = largestConnected = top = 0;
     highestDegree = lowestDegree = -1;
     adjList = NULL;
-    degrees = NULL;
+    influencersArr = NULL;
 }
 socialNetwork::~socialNetwork() {
+    // if (adjList != NULL) {
+    //     for (int i = 0; i < vertexCount; i++) {
+    //         edgeStruct *head = adjList[i];
+    //         if (adjList[i] != NULL) {
+    //             edgeStruct *next = adjList[i]->next->next;
+    //             delete head->next;
+    //             head->next = next;
+    //         }
     
+    //     }
+    //     delete []adjList;
+    // }
 }
 bool socialNetwork::readGraph(string fileName) { // read a formatted graph file
     ifstream in;
@@ -53,10 +64,8 @@ void socialNetwork::createGraph() {
     
     // initializes array and sets all the pointers to NULL
     adjList = new edgeStruct*[vertexCount];
-    degrees = new int[vertexCount];
     for (int i = 0; i < vertexCount; i++) {
         adjList[i] = NULL;
-        degrees[i] = 0;
     }
     
 }
@@ -88,20 +97,20 @@ void socialNetwork::addEdge(int src, int dest, int weightVal) {
 
 void socialNetwork::findConnectedComponents() { // find size of the largest connected component
     
-//    bool visit[vertexCount];
+    //    bool visit[vertexCount];
     bool *visit = new bool[vertexCount];
     
     for (int i = 0; i < vertexCount; i++)
         visit[i] = false;
-
+    
     int count = 0;
-
+    
     for (int i = 0; i < vertexCount; i++) {
         if (visit[i] == false) {
             DFS(i, visit, count);
             if (count > largestConnected)
                 largestConnected = count;
-//            cout << "Count: " << count << endl << endl;
+            //            cout << "Count: " << count << endl << endl;
             count = 0;
         }
     }
@@ -111,11 +120,11 @@ void socialNetwork::DFS(int v, bool visit[], int &count) {
     visit[v] = true;
     count++;
     
-//    cout << v << endl;
+    //    cout << v << endl;
     
-//    for (int i = 0; i < vertexCount; i++)
-//        if (visit[adjList[i]->v2] == false)
-//            DFS(adjList[i]->v2, visit, count);
+    //    for (int i = 0; i < vertexCount; i++)
+    //        if (visit[adjList[i]->v2] == false)
+    //            DFS(adjList[i]->v2, visit, count);
     
     for (edgeStruct *curr = adjList[v]; curr != NULL; curr = curr->next)
         if (visit[curr->v2] == false)
@@ -136,19 +145,18 @@ void socialNetwork::degreeStats() { // find the vertices's degree statistics
                 singles++;
         } else {
             unconnected++;
-            continue;
         }
-            
+        
         
         for (edgeStruct *curr = adjList[i]; curr != NULL; curr = curr->next) { // traverses through adjacent nodes
             
             currDegree++;
             
         }
-    
+        
         // after done traversing through adjacent nodes
         
-//        degrees[i] = currDegree; // for triangle use
+        //        degrees[i] = currDegree; // for triangle use
         
         if (highestDegree == currDegree)
             countOfHighestDegree++;
@@ -178,98 +186,142 @@ void socialNetwork::degreeStats() { // find the vertices's degree statistics
     
 }
 void socialNetwork::diameter() { // find the graph diameter
-//    bool *visit = new bool[vertexCount];
-//    int **shortestPaths = new int*[vertexCount];
-//    for (int i = 0; i < vertexCount; i++) {
-//        shortestPaths[i] = new int[vertexCount];
-//        visit[i] = false;
-//    }
-//
-//    for (int s = 0; s < vertexCount; s++) {
-//        for (int v = 0; v < vertexCount; v++) {
-//            visit[v] = false;
-//        }
-//
-//        priorityQueue<int> myQueue(MIN, vertexCount);
-//        visit[s] = true;
-//        myQueue.insert(s, s);
-//        shortestPaths[s][s] = 0;
-//
-//        while (!myQueue.isEmpty()) {
-//            unsigned int v = 0;
-//            int throwaway = 0;
-//            myQueue.deleteMin(throwaway, v);
-//
-//
-//        }
-//
-//
-//    }
+    bool *visit = new bool[vertexCount];
+    int trueCounter = 0;
+
+    int **shortestPaths = new int*[vertexCount]; /// make a 2d array
+    for (int i = 0; i < vertexCount; i++)
+        shortestPaths[i] = new int[vertexCount];
+
+    for (int i = 0; i < vertexCount; i++)
+        for (int j = 0; j < vertexCount; j++)
+            shortestPaths[i][j] = -1;
+
+    for (int s = 0; s < vertexCount; s++) {
+        trueCounter = 0;
+        
+        for (int v = 0; v < vertexCount; v++)
+            visit[v] = false;
+
+        priorityQueue<int> myQueue(MIN, vertexCount); // initialize empty myQueue
+        visit[s] = true;
+        myQueue.insert(s, s);
+        shortestPaths[s][s] = 0;
+
+        while (!myQueue.isEmpty()) {
+            int v = 0;
+            int throwaway = 0;
+            myQueue.deleteMin(v, v);
+
+            for (edgeStruct *w = adjList[v]; w != NULL; w = w->next) {
+                if (trueCounter == vertexCount)
+                    break;
+
+                if (visit[w->v2] == false) {
+                    visit[w->v2] = true;
+                    trueCounter++;
+                    shortestPaths[s][w->v2] = shortestPaths[s][v] + 1;
+                    myQueue.insert(w->v2, w->v2);
+                }
+            }
+        }
+    }
+
+    for (int i = 0; i < vertexCount; i++) {
+        for (int j = 0; j < vertexCount; j++) {
+            if (shortestPaths[i][j] > dia)
+                dia = shortestPaths[i][j];
+        }
+     }
+    
+    
+    
 }
 void socialNetwork::influencers(int topCount) { // find the top n influencer's based on eigenvector centrality
     
-////    create v[|V|] and initialize all to 1
-////    create w[|V|]
-//    unsigned long long v[vertexCount];
-//    unsigned long long w[vertexCount];
-////    int *v = new int[vertexCount];
-////    int *w = new int[vertexCount];
+    top = topCount;
+    
+    //    create v[|V|] and initialize all to 1
+    //    create w[|V|]
+        unsigned long long v[vertexCount];
+        unsigned long long w[vertexCount];
+     //    int *v = new int[vertexCount];
+     //    int *w = new int[vertexCount];
+    
+        for (int i = 0; i < vertexCount; i++)
+            v[i] = 1;
+    
+        //    Repeat 100 times
+        for (int j = 0; j < 10; j++) {
+            //    initialize all w[|V| to 0
+            for (int i = 0; i < vertexCount; i++)
+                w[i] = 0;
+    
+            // for every vertex i, in graph, G=(V,E)
+            for (int i = 0; i < vertexCount; i++) {
+                // for every adjacent u of i
+                for (edgeStruct *adjOfI = adjList[i]; adjOfI != NULL; adjOfI = adjOfI->next) {
+                    //                     w[u] += v[i]
+                    w[adjOfI->v2] += v[i];
+                }
+            }
+    
+    
+            //                     set v[] = w[]
+            for (int i = 0; i < vertexCount; i++)
+                v[i] = w[i];
+    
+     //        for (int i = 0; i < 6; i++)
+     //            cout << i << ": " << v[i] << endl;
+        }
+    
+    
+        //                     sum = sum of the entries of v[]
+        unsigned long long sum = 0;
+        for (int i = 0; i < vertexCount; i++)
+            sum += v[i];
+    
+        //                     divide each entry of v[] by sum
+        double x[vertexCount];
+        for (int i = 0; i < vertexCount; i++) {
+//             cout << i << ": " << (v[i] / double(sum)) << endl;
+             x[i] = (v[i]/double(sum));
+        }
+    
+        //                     find top n values in v[]
+    
+    priorityQueue<double> myQueue(MIN, topCount);
+    for (int i = 0; i < topCount; i++)
+        myQueue.insert(i, x[i]);
+    
+    int throwaway1 = 0;
+    double throwaway2 = 0;
+    
+    for (int i = 4; i < vertexCount; i++) {
+        if (x[i] > myQueue.retMin()) {
+            myQueue.deleteMin(throwaway1, throwaway2);
+            myQueue.insert(i, x[i]);
+        }
+    }
+    
+    influencersArr = new influencersStruct[topCount];
+    for (int i = 0; i < topCount; i++)
+        myQueue.deleteMin(influencersArr[i].influencerName, influencersArr[i].influencerValue);
+    
+//    myQueue.printHeap();
+    
+//         bubbleSort(x, vertexCount);
 //
-//    for (int i = 0; i < vertexCount; i++)
-//        v[i] = 1;
-//
-//    //    Repeat 100 times
-//    for (int j = 0; j < 10; j++) {
-//        //    initialize all w[|V| to 0
-//
-//
-//        for (int i = 0; i < vertexCount; i++)
-//            w[i] = 0;
-//
-//        // for every vertex i, in graph, G=(V,E)
-//        for (int i = 0; i < vertexCount; i++) {
-//            // for every adjacent u of i
-//            for (edgeStruct *adjOfI = adjList[i]; adjOfI != NULL; adjOfI = adjOfI->next) {
-//                //                     w[u] += v[i]
-//                w[adjOfI->v2] += v[i];
-//            }
-//        }
-//
-//
-//        //                     set v[] = w[]
-//        for (int i = 0; i < vertexCount; i++)
-//            v[i] = w[i];
-//
-////        for (int i = 0; i < 6; i++)
-////            cout << i << ": " << v[i] << endl;
-//    }
-//
-//
-//    //                     sum = sum of the entries of v[]
-//    unsigned long long sum = 0;
-//    for (int i = 0; i < vertexCount; i++)
-//        sum += v[i];
-//
-//    //                     divide each entry of v[] by sum
-////    double x[vertexCount];
-//    for (int i = 0; i < vertexCount; i++) {
-////        cout << i << ": " << (v[i] / double(sum))*100 << endl;
-////        x[i] = (v[i]/double(sum))*10;
-//    }
-//
-//    //                     find top n values in v[]
-////    bubbleSort(x, topCount);
-////
-////    for (int i = 0; i < topCount; i++) {
-////        cout << x[i] << endl;
-////    }
-
-
+//         for (int i = 0; i < topCount; i++) {
+//             cout << i << " " << x[i] << endl;
+//         }
+    
+    
 }
 void socialNetwork::triangles() { // find the count of triangles for the graph.
     
-//    // find combination of every two nodes
-//    // go through every vertex
+    //    // find combination of every two nodes
+    //    // go through every vertex
     
     
     
@@ -278,7 +330,7 @@ void socialNetwork::triangles() { // find the count of triangles for the graph.
         for (edgeStruct *iCurr = adjList[i]; iCurr != NULL; iCurr = iCurr->next) { // goes through all the adjacent edges of every vertex
             
             for (edgeStruct *jCurr = adjList[iCurr->v2]; jCurr != NULL; jCurr = jCurr->next) { // goes through all the adjacent edges of the adjacent edges of every vertex
-
+                
                 for (edgeStruct *kCurr = adjList[jCurr->v2]; kCurr != NULL; kCurr=kCurr->next) {
                     if (kCurr->v2 == i) {
                         trianglesCnt++;
@@ -288,7 +340,7 @@ void socialNetwork::triangles() { // find the count of triangles for the graph.
             }
         }
     }
-
+    
     trianglesCnt = trianglesCnt / 6;
 }
 void socialNetwork::printGraph() { // print the formatted graph. Optional, used only for debugging.
@@ -330,11 +382,13 @@ void socialNetwork::graphInformation() {
     
     cout << endl;
     
-    cout << "Graph Diameter: " << endl;
+    cout << "Graph Diameter: " << dia << endl;
     
     cout << endl;
     
-    cout << "Top 5 influencer's:" << endl;
+    cout << "Top 5 influencer's: " << endl;
+    for (int i = top - 1; i >= 0; i--)
+        cout << influencersArr[i].influencerName << " (" << influencersArr[i].influencerValue << ")  ";
     
     cout << endl;
     
@@ -359,7 +413,8 @@ void socialNetwork::bubbleSort(double myArray[], int top) {
 }
 
 void socialNetwork::swap(double& x, double&y) {
-    int temp = x;
+    double temp = x;
     x = y;
     y = temp;
 }
+

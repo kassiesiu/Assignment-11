@@ -26,6 +26,7 @@ private:
     string title;
     int vertexCount;
     int edgeCount;
+    int top;
     
     int dia;
     int trianglesCnt;
@@ -44,8 +45,13 @@ private:
         edgeStruct *next;
     };
     
+    struct influencersStruct {
+        int influencerName;
+        double influencerValue;
+    };
+    
     edgeStruct **adjList;
-    int *degrees;
+    influencersStruct *influencersArr;
     
     void createGraph();
     void addEdge(int, int, int);
@@ -54,3 +60,4 @@ private:
     void swap(double&, double&);
     
 };
+

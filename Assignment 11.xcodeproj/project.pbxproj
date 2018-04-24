@@ -24,6 +24,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		C321B639208EED9C007461B6 /* priorityQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = priorityQueue.h; sourceTree = "<group>"; };
 		C3D8E6232081609100159E6A /* Assignment 11 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Assignment 11"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3D8E62D208160B300159E6A /* snaStats.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = snaStats.cpp; sourceTree = "<group>"; };
 		C3D8E62F208160C900159E6A /* socialNetwork.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = socialNetwork.cpp; sourceTree = "<group>"; };
@@ -62,6 +63,7 @@
 			children = (
 				C3D8E62D208160B300159E6A /* snaStats.cpp */,
 				C3D8E62F208160C900159E6A /* socialNetwork.cpp */,
+				C321B639208EED9C007461B6 /* priorityQueue.h */,
 				C3D8E632208160E600159E6A /* socialNetwork.h */,
 			);
 			path = "Assignment 11";
