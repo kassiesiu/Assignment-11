@@ -17,30 +17,30 @@ socialNetwork::socialNetwork() {
     influencersArr = NULL;
 }
 socialNetwork::~socialNetwork() {
-    // if (adjList != NULL) {
-    //     for (int i = 0; i < vertexCount; i++) {
-    //         // edgeStruct *head = adjList[i];
-    //         // if (adjList[i] != NULL) {
-    //         //     edgeStruct *next = adjList[i]->next->next;
-    //         //     delete head->next;
-    //         //     head->next = next;
-    //         // }
-    //         for (edgeStruct *nextStruct = adjList[i]; nextStruct != NULL; nextStruct = nextStruct->next) {
-    //             if (nextStruct->next != NULL)
-    //                 adjList[i] = nextStruct->next;
-    //             else
-    //                 adjList[i] = NULL;
+     if (adjList != NULL) {
+         for (int i = 0; i < vertexCount; i++) {
+             // edgeStruct *head = adjList[i];
+             // if (adjList[i] != NULL) {
+             //     edgeStruct *next = adjList[i]->next->next;
+             //     delete head->next;
+             //     head->next = next;
+             // }
+             for (edgeStruct *nextStruct = adjList[i]; nextStruct != NULL; nextStruct = nextStruct) {
+                 if (nextStruct->next != NULL)
+                     adjList[i] = nextStruct->next;
+                 else
+                     adjList[i] = NULL;
     
-    //             delete nextStruct;
+                 delete nextStruct;
     
-    //             if (adjList[i] == NULL)
-    //                 nextStruct = NULL;
-    //             else
-    //                 nextStruct = adjList[i];
-    //         }
+                 if (adjList[i] == NULL)
+                     nextStruct = NULL;
+                 else
+                     nextStruct = adjList[i];
+             }
     
-    //     }
-    // }
+         }
+     }
     
     // delete []influencersArr;
 }
@@ -307,7 +307,7 @@ void socialNetwork::diameter() { // find the graph diameter
     //        cout << " " << endl;
     //    }
     
-    
+    delete []shortestPaths;
     
     
 }
